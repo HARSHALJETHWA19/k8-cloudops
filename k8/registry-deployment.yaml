@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 10weeksofcloudops
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cloudopsk8
+  template:
+    metadata:
+      labels:
+        app: cloudopsk8
+    spec:
+      initContainers:
+      - name: init-data-dir
+        image: alpine:latest
+        command: ["sh", "-c", "mkdir -p /var/lib/10weeksofcloudops"]
+        volumeMounts:
+        - name: data-volume
+          mountPath: /var/lib/10weeksofcloudops
+      containers:
+      - name: cloudopsk8
+        image: registry:2.8.2
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "1Gi"
+          limits:
+            memory: "2Gi"
+        livenessProbe:
+          tcpSocket:
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 30
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: registry-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: 10weeksofclouops
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi

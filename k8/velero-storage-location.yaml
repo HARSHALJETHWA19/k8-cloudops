@@ -1,0 +1,9 @@
+apiVersion: velero.io/v1
+kind: BackupStorageLocation
+metadata:
+  name: default
+spec:
+  provider: aws  # Specify your storage provider (e.g., aws, azure, gcp)
+  objectStorage:
+    bucket: valero-k8-backup  # Specify your storage bucket name
+    prefix: velero

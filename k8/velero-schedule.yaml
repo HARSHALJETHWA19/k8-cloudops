@@ -1,0 +1,9 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: registry-backup-schedule
+spec:
+  schedule: "0 0 * * *"  # Schedule a daily backup at midnight UTC
+  template:
+    includedNamespaces:
+      - cloudopsk8  # Namespace where your Docker registry is deployed
